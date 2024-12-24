@@ -1,133 +1,54 @@
-
-
-import React from 'react';
-import { UserButton } from "@clerk/nextjs";
-import { Search } from 'lucide-react';
-import { Button } from '@/components/molecules/shadcn/button';
-import PasswordDialog from '@/components/PasswordDialog';
-
+import { AppSidebar } from "@/components/app-sidebar"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/molecules/shadcn/card';
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/molecules/shadcn/breadcrumb"
+import { Separator } from "@/components/molecules/shadcn/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/molecules/shadcn/sidebar"
+import { ThemeSwitcher } from "@/components/theme-switcher"
+import { DashboardContent } from "@/components/dashboard-content"
 
-// Sidebar Navigation Component
-const SidebarNav = () => {
+
+export default function Page() {
   return (
-    <div className="w-64 h-screen bg-background border-r p-4 flex flex-col">
-      {/* User Profile Section */}
-      <div className="flex items-center space-x-2 mb-8">
-        <span className="text-sm text-muted-foreground"><UserButton /></span>
-      </div>
-
-      {/* Main Navigation Section */}
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Passwords</h2>
-          <nav className="space-y-1">
-            <Button variant="ghost" className="w-full justify-start">
-              <span className="mr-2">🔒</span>
-              Passwords
-            </Button>
-            <Button variant="ghost" className="w-full justify-start">
-              <span className="mr-2">⚡</span>
-              Password Generator
-            </Button>
-            <Button variant="ghost" className="w-full justify-start">
-              <span className="mr-2">📊</span>
-              Password Analyzer
-            </Button>
-          </nav>
-        </div>
-
-        {/* Categories Section */}
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Categories</h2>
-          <nav className="space-y-1">
-            <Button variant="ghost" className="w-full justify-start">
-              <span className="mr-2">📋</span>
-              All
-            </Button>
-            <Button variant="ghost" className="w-full justify-start">
-              <span className="mr-2">🌐</span>
-              Web Logins
-            </Button>
-            <Button variant="ghost" className="w-full justify-start">
-              <span className="mr-2">💳</span>
-              Credit Cards
-            </Button>
-            <Button variant="ghost" className="w-full justify-start">
-              <span className="mr-2">📄</span>
-              Identity Documents
-            </Button>
-            {/* Additional category buttons */}
-          </nav>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Main Content Area Component
-const MainContent = () => {
-  return (
-    <div className="flex-1 p-6">
-      <div className="space-y-4">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold">All Passwords</h1>
-            <p className="text-sm text-muted-foreground">
-              Safety manage and access your passwords.
-            </p>
-          </div>
-          {/* <Button>
-            <span className="mr-2">+</span>
-            Add new password
-          </Button> */}
-          <PasswordDialog />
-        </div>
-
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full pl-10 pr-4 py-2 border rounded-md bg-background"
-          />
-        </div>
-
-        {/* No Passwords Message */}
-        <Card>
-          <CardContent className="py-10">
-            <div className="text-center space-y-2">
-              <div className="text-4xl mb-4">🔐</div>
-              <h3 className="text-lg font-semibold text-red-500">
-                No Password Found
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Looks like you haven't added any passwords yet.
-              </p>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex flex-1 items-center justify-between px-4">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink href="#">
+                      Building Your Application
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-};
+            <ThemeSwitcher className="hidden md:flex" />
+          </div>
+        </header>
 
-// Main App Component
-const PasswordDashboard = () => {
-  return (
-    <div className="flex h-screen bg-background">
-      <SidebarNav />
-      <MainContent />
-    </div>
-  );
-};
+        <DashboardContent />
 
-export default PasswordDashboard;
+
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}
