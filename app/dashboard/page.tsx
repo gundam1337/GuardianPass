@@ -1,27 +1,11 @@
-// "use client";
-
-// import { UserButton } from "@clerk/nextjs";
-// import { SignUp, useUser } from '@clerk/nextjs'
-
-// export default function DashboardPage() {
-//   const { user } = useUser()
-//   console.log(user);
-//   return (
-//     <div className="min-h-screen flex flex-col items-center justify-center">
-//       <div className="absolute top-4 right-4">
-//         <UserButton />
-//       </div>
-//       <h1 className="text-4xl font-bold">Hello World!</h1>
-//       <p className="mt-4">Welcome to your protected dashboard</p>
-//     </div>
-//   );
-// }
 
 
 import React from 'react';
 import { UserButton } from "@clerk/nextjs";
 import { Search } from 'lucide-react';
 import { Button } from '@/components/molecules/shadcn/button';
+import PasswordDialog from '@/components/PasswordDialog';
+
 import {
   Card,
   CardContent,
@@ -100,10 +84,11 @@ const MainContent = () => {
               Safety manage and access your passwords.
             </p>
           </div>
-          <Button>
+          {/* <Button>
             <span className="mr-2">+</span>
             Add new password
-          </Button>
+          </Button> */}
+          <PasswordDialog />
         </div>
 
         {/* Search Bar */}
