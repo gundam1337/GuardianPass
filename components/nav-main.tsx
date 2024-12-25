@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,23 +16,35 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/molecules/shadcn/sidebar";
+import { useDashboard } from '@/contexts/DashboardContext';  
 
 export function NavMain({
     items,
-    title, // Add default value "Categories"
+    title,
+    onItemClick,
+    activeItem
   }: {
     items: {
       title: string;
-      url: string;
+      id: string;
       icon?: LucideIcon;
       isActive?: boolean;
       items?: {
         title: string;
-        url: string;
+        id: string;
       }[];
     }[];
     title?: string;
+    onItemClick: (id: string) => void;
+    activeItem: string;
 }) {
+  const { setActiveContent, activeContent } = useDashboard();  
+
+  // Add click handler
+  const handleItemClick = (id: string) => {
+    setActiveContent(id);
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>{title}</SidebarGroupLabel>
@@ -47,7 +58,11 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton 
+                  tooltip={item.title}
+                  onClick={() => handleItemClick(item.id)}  
+                  className={activeContent === item.id ? 'active' : ''} 
+                >
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -57,10 +72,11 @@ export function NavMain({
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
+                      <SidebarMenuSubButton 
+                        onClick={() => handleItemClick(subItem.id)}  
+                        className={activeContent === subItem.id ? 'active' : ''} 
+                      >
+                        <span>{subItem.title}</span>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

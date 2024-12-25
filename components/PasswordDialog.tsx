@@ -1,5 +1,5 @@
 "use client";
-import React, { useReducer, useState } from "react";
+import React, { useReducer, useState, ChangeEvent, FormEvent } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,27 +19,43 @@ import {
 } from "@/components/molecules/shadcn/select";
 import { EyeIcon, EyeOffIcon, Plus } from "lucide-react";
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface FormData {
+  websiteName: string;
+  username: string;
+  email: string;
+  password: string;
+  url: string;
+  category: string;
+}
+
+const INITIAL_FORM_DATA: FormData = {
+  websiteName: "",
+  username: "",
+  email: "",
+  password: "",
+  url: "",
+  category: "",
+};
+
 // Sample categories for demonstration
-const sampleCategories = [
+const sampleCategories: Category[] = [
   { id: "1", name: "Social Media", slug: "social" },
   { id: "2", name: "Banking", slug: "banking" },
   { id: "3", name: "Email", slug: "email" },
 ];
 
-const PasswordDialog = () => {
-  const [isOpen, toggleIsOpen] = useReducer((state) => !state, false);
-  const [seePassword, toggleSeePassword] = useReducer((state) => !state, false);
+const PasswordDialog: React.FC = () => {
+  const [isOpen, toggleIsOpen] = useReducer((state: boolean) => !state, false);
+  const [seePassword, toggleSeePassword] = useReducer((state: boolean) => !state, false);
+  const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
 
-  const [formData, setFormData] = useState({
-    websiteName: "",
-    username: "",
-    email: "",
-    password: "",
-    url: "",
-    category: "",
-  });
-
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -47,24 +63,17 @@ const PasswordDialog = () => {
     }));
   };
 
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: string): void => {
     setFormData((prev) => ({
       ...prev,
       category: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     console.log(formData);
-    setFormData({
-      websiteName: "",
-      username: "",
-      email: "",
-      password: "",
-      url: "",
-      category: "",
-    });
+    setFormData(INITIAL_FORM_DATA);
     toggleIsOpen();
   };
 
@@ -76,7 +85,7 @@ const PasswordDialog = () => {
           Add new password
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[80%] xl:max-w-3xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Password</DialogTitle>
           <DialogDescription>
@@ -85,12 +94,12 @@ const PasswordDialog = () => {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Category</label>
+            <label htmlFor="category" className="text-sm font-medium">Category</label>
             <Select
               onValueChange={handleCategoryChange}
               value={formData.category}
             >
-              <SelectTrigger autoFocus className="capitalize">
+              <SelectTrigger id="category" autoFocus className="capitalize">
                 <SelectValue placeholder="Select Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -108,21 +117,25 @@ const PasswordDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Website Name</label>
+            <label htmlFor="websiteName" className="text-sm font-medium">Website Name</label>
             <Input
+              id="websiteName"
               name="websiteName"
               placeholder="Enter website name"
               value={formData.websiteName}
               onChange={handleInputChange}
+              required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label htmlFor="email" className="text-sm font-medium">
               Email <span className="text-zinc-500">(Optional)</span>
             </label>
             <Input
+              id="email"
               name="email"
+              type="email"
               placeholder="Enter email address"
               value={formData.email}
               onChange={handleInputChange}
@@ -130,10 +143,11 @@ const PasswordDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label htmlFor="username" className="text-sm font-medium">
               Username <span className="text-zinc-500">(Optional)</span>
             </label>
             <Input
+              id="username"
               name="username"
               placeholder="Enter username"
               value={formData.username}
@@ -142,20 +156,23 @@ const PasswordDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Password</label>
+            <label htmlFor="password" className="text-sm font-medium">Password</label>
             <div className="flex items-center space-x-3">
               <Input
+                id="password"
                 name="password"
                 type={seePassword ? "text" : "password"}
                 placeholder="Enter password"
                 value={formData.password}
                 onChange={handleInputChange}
+                required
               />
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
                 onClick={toggleSeePassword}
+                aria-label={seePassword ? "Hide password" : "Show password"}
               >
                 {seePassword ? (
                   <EyeOffIcon className="h-4 w-4 text-zinc-700" />
@@ -170,11 +187,13 @@ const PasswordDialog = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label htmlFor="url" className="text-sm font-medium">
               URL <span className="text-zinc-500">(Optional)</span>
             </label>
             <Input
+              id="url"
               name="url"
+              type="url"
               placeholder="Enter website URL"
               value={formData.url}
               onChange={handleInputChange}

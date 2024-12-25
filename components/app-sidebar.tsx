@@ -1,5 +1,5 @@
 "use client";
-
+//to add : make the sidebar catgories clickable and have some clikable items appear
 import * as React from "react";
 import {
   Globe,
@@ -10,7 +10,6 @@ import {
   Mail,
   Wifi,
   Landmark,
-  MoreHorizontal,
   GalleryVerticalEnd,
   AudioWaveform,
   Command,
@@ -19,7 +18,6 @@ import {
 import { Lock, Wand2, BarChart2 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
 import {
@@ -29,6 +27,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/molecules/shadcn/sidebar";
+import { useDashboard } from '@/contexts/DashboardContext';  // Add this import
 
 const data = {
   user: {
@@ -56,84 +55,95 @@ const data = {
   Categories: [
     {
       title: "Web Logins",
-      url: "#",
+      id: "WebLogins",
       icon: Globe,
     },
     {
       title: "Credit Cards",
-      url: "#",
+      id: "CreditCards",
       icon: CreditCard,
     },
     {
       title: "Identity Documents",
-      url: "#",
+      id: "Identity Documents",
       icon: UserSquare,
     },
     {
       title: "Notes",
-      url: "#",
+      id: "Notes",
       icon: FileText,
     },
     {
       title: "Social Media Accounts",
-      url: "#",
+      id: "SocialMediaAccounts",
       icon: AtSign,
     },
     {
       title: "Email Accounts",
-      url: "#",
+      id: "EmailAccounts",
       icon: Mail,
     },
     {
       title: "Wifi Passwords",
-      url: "#",
+      id: "WifiPasswords",
       icon: Wifi,
     },
     {
       title: "Bank Accounts",
-      url: "#",
+      id: "BankAccounts",
       icon: Landmark,
     },
   ],
   PasswordMenu: [
     {
       title: "Passwords",
-      url: "#",
+      id: "passwords", 
       icon: Lock,
     },
     {
       title: "Password Generator",
-      url: "#",
+      id: "passwordGenerator",
       icon: Wand2,
     },
     {
       title: "Password Analyzer",
-      url: "#",
+      id: "passwordAnalyzer",
       icon: BarChart2,
     },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain
-          items={data.PasswordMenu}
-          title="Passwords" // Add your custom title here
-        />
-        <NavMain
-          items={data.Categories}
-          title="Categories" // Add your custom title here
-        />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser/>
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
-  );
-}
+    const { setActiveContent, activeContent } = useDashboard();  // Add this line
+  
+    // Create click handlers
+    const handleMenuClick = (id: string) => {
+      setActiveContent(id);
+    };
+  
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <TeamSwitcher teams={data.teams} />
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain
+            items={data.PasswordMenu}
+            title="Passwords"
+            onItemClick={handleMenuClick}  // Add this prop
+            activeItem={activeContent}     // Add this prop
+          />
+          <NavMain
+            items={data.Categories}
+            title="Categories"
+            onItemClick={handleMenuClick}  // Add this prop
+            activeItem={activeContent}     // Add this prop
+          />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    );
+  }
