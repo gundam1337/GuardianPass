@@ -13,14 +13,11 @@ export default function Page() {
   return (
     <DashboardProvider>
       <SidebarProvider>
-
         <AppSidebar />
-        
         <SidebarInset>
           <AppHeader />
           <DashboardContent />
         </SidebarInset>
-
       </SidebarProvider>
     </DashboardProvider>
   );

@@ -1,4 +1,3 @@
-// contexts/DashboardContext.tsx
 import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 
 interface DashboardContextType {

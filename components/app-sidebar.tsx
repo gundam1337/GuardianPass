@@ -1,5 +1,4 @@
 "use client";
-//to add : make the sidebar catgories clickable and have some clikable items appear
 import * as React from "react";
 import {
   Globe,
@@ -13,6 +12,7 @@ import {
   GalleryVerticalEnd,
   AudioWaveform,
   Command,
+  Trash
 } from "lucide-react";
 
 import { Lock, Wand2, BarChart2 } from "lucide-react";
@@ -109,6 +109,11 @@ const data = {
       title: "Password Analyzer",
       id: "passwordAnalyzer",
       icon: BarChart2,
+    },
+    {
+      title: "Trash",
+      id: "trash",
+      icon: Trash,
     },
   ],
 };
