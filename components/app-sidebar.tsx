@@ -27,7 +27,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/molecules/shadcn/sidebar";
-import { useDashboard } from '@/contexts/DashboardContext';  // Add this import
+import { useDashboard } from "@/contexts/DashboardContext"; // Add this import
 
 const data = {
   user: {
@@ -97,7 +97,7 @@ const data = {
   PasswordMenu: [
     {
       title: "Passwords",
-      id: "passwords", 
+      id: "passwords",
       icon: Lock,
     },
     {
@@ -114,36 +114,38 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const { setActiveContent, activeContent } = useDashboard();  // Add this line
-  
-    // Create click handlers
-    const handleMenuClick = (id: string) => {
-      setActiveContent(id);
-    };
-  
-    return (
-      <Sidebar collapsible="icon" {...props}>
-        <SidebarHeader>
-          <TeamSwitcher teams={data.teams} />
-        </SidebarHeader>
-        <SidebarContent>
-          <NavMain
-            items={data.PasswordMenu}
-            title="Passwords"
-            onItemClick={handleMenuClick}  // Add this prop
-            activeItem={activeContent}     // Add this prop
-          />
-          <NavMain
-            items={data.Categories}
-            title="Categories"
-            onItemClick={handleMenuClick}  // Add this prop
-            activeItem={activeContent}     // Add this prop
-          />
-        </SidebarContent>
-        <SidebarFooter>
-          <NavUser />
-        </SidebarFooter>
-        <SidebarRail />
-      </Sidebar>
-    );
-  }
+  const { setActiveContent, activeContent } = useDashboard();
+
+  const handleMenuClick = (id: string) => {
+    // console.log("AppSidebar - Clicked section:", id);
+    // console.log("AppSidebar - Previous activeContent:", activeContent);
+    setActiveContent(id);
+  };
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      {/* team switcher */}
+      <SidebarHeader>
+        <TeamSwitcher teams={data.teams} />
+      </SidebarHeader>
+
+      <SidebarContent>
+        <NavMain
+          items={data.PasswordMenu}
+          title="Passwords"
+          onItemClick={handleMenuClick}
+          activeItem={activeContent}
+        />
+        <NavMain
+          items={data.Categories}
+          title="Categories"
+          onItemClick={handleMenuClick}
+          activeItem={activeContent}
+        />
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}

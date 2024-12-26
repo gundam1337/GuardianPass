@@ -3,7 +3,6 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import {
   Collapsible,
-  CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/molecules/shadcn/collapsible";
 import {
@@ -12,36 +11,35 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/components/molecules/shadcn/sidebar";
-import { useDashboard } from '@/contexts/DashboardContext';  
+import { useDashboard } from "@/contexts/DashboardContext";
+import { cn } from "@/lib/utils";
 
 export function NavMain({
-    items,
-    title,
-    onItemClick,
-    activeItem
-  }: {
-    items: {
+  items,
+  title,
+  onItemClick,
+  activeItem,
+}: {
+  items: {
+    title: string;
+    id: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
+    items?: {
       title: string;
       id: string;
-      icon?: LucideIcon;
-      isActive?: boolean;
-      items?: {
-        title: string;
-        id: string;
-      }[];
     }[];
-    title?: string;
-    onItemClick: (id: string) => void;
-    activeItem: string;
+  }[];
+  title?: string;
+  onItemClick: (id: string) => void;
+  activeItem: string;
 }) {
-  const { setActiveContent, activeContent } = useDashboard();  
+  const { setActiveContent, activeContent } = useDashboard();
 
-  // Add click handler
   const handleItemClick = (id: string) => {
+    // console.log('NavMain - Clicked section:', id);
+    // console.log('NavMain - Previous activeContent:', activeContent);
     setActiveContent(id);
   };
 
@@ -58,30 +56,22 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton 
+                <SidebarMenuButton
                   tooltip={item.title}
-                  onClick={() => handleItemClick(item.id)}  
-                  className={activeContent === item.id ? 'active' : ''} 
+                  onClick={() => handleItemClick(item.id)}
+                  className={cn(
+                    "transition-colors duration-200",
+                    activeContent === item.id ? 
+                    "bg-accent/100 text-accent-foreground hover:bg-accent/100" : 
+                    "hover:bg-accent/40"
+                  )}
                 >
-                  {item.icon && <item.icon />}
+                  {item.icon && <item.icon                   className={cn(
+                    activeContent === item.id ? "text-foreground" : "text-muted-foreground"
+                  )} />}
                   <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton 
-                        onClick={() => handleItemClick(subItem.id)}  
-                        className={activeContent === subItem.id ? 'active' : ''} 
-                      >
-                        <span>{subItem.title}</span>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
         ))}
