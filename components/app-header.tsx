@@ -13,7 +13,6 @@ import {
   
   export const AppHeader = () => {
     const {activeContent } = useDashboard();
-    // console.log("AppHeader - activeContent:", activeContent);
 
     return (
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -24,6 +23,7 @@ import {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
+                {/* modify this in the fuuture */}
                   <BreadcrumbLink>Acme Inc</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />

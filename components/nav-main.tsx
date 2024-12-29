@@ -1,5 +1,6 @@
 "use client";
-import { ChevronRight, type LucideIcon } from "lucide-react";
+
+import { type LucideIcon } from "lucide-react";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -34,6 +35,7 @@ export function NavMain({
   onItemClick: (id: string) => void;
   activeItem: string;
 }) {
+
   const { setActiveContent, activeContent } = useDashboard();
 
   const handleItemClick = (id: string) => {
@@ -65,7 +67,7 @@ export function NavMain({
                     "hover:bg-accent/40"
                   )}
                 >
-                  {item.icon && <item.icon                   className={cn(
+                  {item.icon && <item.icon className={cn(
                     activeContent === item.id ? "text-foreground" : "text-muted-foreground"
                   )} />}
                   <span>{item.title}</span>

@@ -12,7 +12,8 @@ import {
   GalleryVerticalEnd,
   AudioWaveform,
   Command,
-  Trash
+  Trash,
+  UserCog,
 } from "lucide-react";
 
 import { Lock, Wand2, BarChart2 } from "lucide-react";
@@ -20,6 +21,7 @@ import { Lock, Wand2, BarChart2 } from "lucide-react";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
+
 import {
   Sidebar,
   SidebarContent,
@@ -27,14 +29,10 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/molecules/shadcn/sidebar";
-import { useDashboard } from "@/contexts/DashboardContext"; // Add this import
+
+import { useDashboard } from "@/contexts/DashboardContext";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "Acme Inc",
@@ -116,6 +114,13 @@ const data = {
       icon: Trash,
     },
   ],
+  AdminConsole: [
+    {
+      title: "Admin Console",
+      id: "adminConsole",
+      icon: UserCog,
+    },
+  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -135,6 +140,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent>
         <NavMain
+          items={data.AdminConsole}
+          title="Admin Console"
+          onItemClick={handleMenuClick}
+          activeItem={activeContent}
+        />
+
+        <NavMain
           items={data.PasswordMenu}
           title="Passwords"
           onItemClick={handleMenuClick}
@@ -147,6 +159,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           activeItem={activeContent}
         />
       </SidebarContent>
+
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>

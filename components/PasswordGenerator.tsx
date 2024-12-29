@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/molecules/shadcn/card";
 import { Button } from "@/components/molecules/shadcn/button";
 import { Switch } from "@/components/molecules/shadcn/switch";
 import { Slider } from "@/components/molecules/shadcn/slider";
@@ -62,13 +61,13 @@ const PasswordGenerator: React.FC = () => {
 
   return (
     <div className="w-full max-w-md mx-auto p-4">
-      <Card className=" text-zinc-400">
-        <CardContent className="pt-6 space-y-6">
+      <div className="text-zinc-400 rounded-lg p-6">
+        <div className="space-y-6">
           <div className="relative">
             <Input
               value={password}
               readOnly
-              className="w-full bg-zinc-900 border-none text-zinc-300"
+              className="w-full  text-zinc-300"
               placeholder="your password generated"
             />
             <button
@@ -169,8 +168,8 @@ const PasswordGenerator: React.FC = () => {
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

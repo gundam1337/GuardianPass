@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,21 +12,19 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-
-import { Button } from "@/components/molecules/shadcn/button"
-import { Checkbox } from "@/components/molecules/shadcn/checkbox"
+import { EditEntryAction } from "./EditPassModal";
+import { ChevronDown, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/molecules/shadcn/button";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/molecules/shadcn/dropdown-menu"
+} from "@/components/molecules/shadcn/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -34,154 +32,71 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/molecules/shadcn/table"
+} from "@/components/molecules/shadcn/table";
 
-export type PasswordEntry = {
-  id: string
-  website: string
-  username: string
-  lastUpdated: string
+import type { Table as TableType } from "@tanstack/react-table";
+
+interface DateFilterProps<TData> {
+  table: any;
+  dateField: keyof TData;
 }
 
-const data: PasswordEntry[] = [
-  {
-    id: "m5gr84i9",
-    website: "netflix.com",
-    username: "ken99@yahoo.com",
-    lastUpdated: "2024-03-15",
-  },
-  {
-    id: "3u1reuv4",
-    website: "github.com",
-    username: "devAbe45",
-    lastUpdated: "2024-02-28",
-  },
-  {
-    id: "derv1ws0",
-    website: "amazon.com",
-    username: "monserrat44",
-    lastUpdated: "2024-03-10",
-  },
-  {
-    id: "5kma53ae",
-    website: "spotify.com",
-    username: "silas.music",
-    lastUpdated: "2024-03-01",
-  },
-  {
-    id: "bhqecj4p",
-    website: "linkedin.com",
-    username: "carmella.pro",
-    lastUpdated: "2024-03-12",
-  },
-]
+function DateFilterDropdown<TData>({ table, dateField }: DateFilterProps<TData>) {
+  const applyDateFilter = (days: number) => {
+    const today = new Date();
+    const compareDate = new Date();
+    compareDate.setDate(today.getDate() - days);
 
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
+    table.getColumn(dateField)?.setFilterValue((value: string) => {
+      const date = new Date(value);
+      return date >= compareDate;
+    });
+  };
 
-export const columns: ColumnDef<PasswordEntry>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "website",
-    header: "Website/App",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("website")}</div>
-    ),
-  },
-  {
-    accessorKey: "username",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Username/Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+  const clearFilter = () => {
+    table.getColumn(dateField)?.setFilterValue(undefined);
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="ml-auto">
+          Filter by Date <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue("username")}</div>,
-  },
-  {
-    accessorKey: "lastUpdated",
-    header: () => <div className="text-right">Last Updated</div>,
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("lastUpdated"))
-      const formatted = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }).format(date)
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => applyDateFilter(7)}>
+          Last 7 days
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => applyDateFilter(30)}>
+          Last 30 days
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => applyDateFilter(90)}>
+          Last 90 days
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={clearFilter}>Show all</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const entry = row.original
+interface DataTableProps<TData> {
+  data: TData[];
+  columns: ColumnDef<TData>[];
+  dateFilterField?: keyof TData;
+  showDateFilter?: boolean;
+}
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(entry.username)}
-            >
-              Copy username
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {/* create a modal that displays the password information */}
-            <DropdownMenuItem>Edit Entry</DropdownMenuItem>
-            <DropdownMenuItem>Delete Entry</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
-
-export function PassDataTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+export function DataTable<TData>({
+  data,
+  columns,
+  dateFilterField,
+  showDateFilter = true,
+}: DataTableProps<TData>) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data,
@@ -200,57 +115,30 @@ export function PassDataTable() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
-    
     <div className="w-full">
-      <div className="flex items-center py-4">
-     
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+      {showDateFilter && dateFilterField && (
+        <div className="flex items-center py-4">
+          <DateFilterDropdown table={table} dateField={dateFilterField} />
+        </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -309,5 +197,5 @@ export function PassDataTable() {
         </div>
       </div>
     </div>
-  )
+  );
 }
