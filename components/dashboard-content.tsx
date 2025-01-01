@@ -20,7 +20,7 @@ const Trash = () => (
 
 export function DashboardContent() {
   const { activeContent } = useDashboard();
-  console.log("DashboardContent - activeContent:", activeContent);
+//   console.log("DashboardContent - activeContent:", activeContent);
 
   const renderContent = () => {
     switch (activeContent) {

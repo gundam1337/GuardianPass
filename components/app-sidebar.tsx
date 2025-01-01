@@ -31,6 +31,7 @@ import {
 } from "@/components/molecules/shadcn/sidebar";
 
 import { useDashboard } from "@/contexts/DashboardContext";
+import { useOrganization } from "@clerk/nextjs";
 
 const data = {
   teams: [
@@ -124,27 +125,33 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { membership } = useOrganization();
+  console.log("membership", membership);
+  const isAdmin = membership?.role === "org:admin";
+  console.log("isAdmin", isAdmin);
   const { setActiveContent, activeContent } = useDashboard();
 
   const handleMenuClick = (id: string) => {
-    console.log("AppSidebar - Clicked section:", id);
-    console.log("AppSidebar - Previous activeContent:", activeContent);
+    // console.log("AppSidebar - Clicked section:", id);
+    // console.log("AppSidebar - Previous activeContent:", activeContent);
     setActiveContent(id);
   };
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* team switcher */}
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher />
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain
-          items={data.AdminConsole}
-          title="Admin Console"
-          onItemClick={handleMenuClick}
-          activeItem={activeContent}
-        />
+        {isAdmin && (
+          <NavMain
+            items={data.AdminConsole}
+            title="Admin Console"
+            onItemClick={handleMenuClick}
+            activeItem={activeContent}
+          />
+        )}
 
         <NavMain
           items={data.PasswordMenu}

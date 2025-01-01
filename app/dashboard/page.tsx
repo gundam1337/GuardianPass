@@ -2,6 +2,8 @@
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { AppHeader } from "@/components/app-header";
+import { Toaster } from "@/components/molecules/shadcn/toaster";
+
 import {
   SidebarInset,
   SidebarProvider,
@@ -17,6 +19,7 @@ export default function Page() {
         <SidebarInset>
           <AppHeader />
           <DashboardContent />
+          <Toaster />
         </SidebarInset>
       </SidebarProvider>
     </DashboardProvider>

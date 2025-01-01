@@ -19,9 +19,7 @@ import {
   SelectValue,
 } from "@/components/molecules/shadcn/select";
 import { EyeIcon, EyeOffIcon, Plus } from "lucide-react";
-
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { useToast } from "@/components/molecules/shadcn/hooks/use-toast";
 
 interface Category {
   id: string;
@@ -38,6 +36,14 @@ interface FormData {
   category: string;
 }
 
+interface FormErrors {
+  websiteName?: string;
+  password?: string;
+  category?: string;
+  email?: string;
+  url?: string;
+}
+
 const INITIAL_FORM_DATA: FormData = {
   websiteName: "",
   username: "",
@@ -47,17 +53,49 @@ const INITIAL_FORM_DATA: FormData = {
   category: "",
 };
 
-// Sample categories for demonstration
+//to add the the new categories
 const sampleCategories: Category[] = [
   { id: "1", name: "Social Media", slug: "social" },
-  { id: "2", name: "Banking", slug: "banking" },
+  { id: "2", name: "Entertainment", slug: "entertainment" },
   { id: "3", name: "Email", slug: "email" },
 ];
 
 const PasswordDialog: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [seePassword, setSeePassword] = useState(false);
+
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  const { toast } = useToast();
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.websiteName.trim()) {
+      newErrors.websiteName = "Website name is required";
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+    }
+
+    if (!formData.category) {
+      newErrors.category = "Category is required";
+    }
+
+    //to use another validator for the email
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (formData.url && !/^https?:\/\/.*/.test(formData.url)) {
+      newErrors.url = "URL must start with http:// or https://";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -65,6 +103,14 @@ const PasswordDialog: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
   };
 
   const handleCategoryChange = (value: string): void => {
@@ -72,37 +118,49 @@ const PasswordDialog: React.FC = () => {
       ...prev,
       category: value,
     }));
+    if (errors.category) {
+      setErrors((prev) => ({
+        ...prev,
+        category: undefined,
+      }));
+    }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    console.log(formData);
-    setFormData(INITIAL_FORM_DATA);
-    setIsOpen(false);
+
+    if (!validateForm()) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: "Please fill in all required fields correctly.",
+      });
+      return;
+    }
+
+    try {
+      // Simulate API call
+      //to add our api call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      toast({
+        title: "Success!",
+        description: "Password has been saved successfully.",
+      });
+
+      setFormData(INITIAL_FORM_DATA);
+      setIsOpen(false);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save password. Please try again.",
+      });
+    }
   };
 
   const toggleIsOpen = () => setIsOpen((prev) => !prev);
   const toggleSeePassword = () => setSeePassword((prev) => !prev);
-
-  //   const createPassword = useMutation(api.password.createPassword);
-  //   const data = useQuery(api.password.getPassword);
-  //   console.log("data is" ,data);
-
-  //   const handleSubmiting = async () => {
-  //     try {
-  //       if (!inputText.trim()) return;
-
-  // Call the mutation
-  //       const result = await createPassword({ text: inputText });
-
-  // Clear the input after successful mutation
-  //       setInputText("");
-
-  //       console.log("Password created:", result);
-  //     } catch (error) {
-  //       console.error("Error creating password:", error);
-  //     }
-  //   };
 
   return (
     <Dialog open={isOpen} onOpenChange={toggleIsOpen}>
@@ -119,10 +177,11 @@ const PasswordDialog: React.FC = () => {
             Enter the necessary information to create a new password and save.
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <label htmlFor="category" className="text-sm font-medium">
-              Category
+              Category<span className="text-red-500">*</span>
             </label>
             <Select
               onValueChange={handleCategoryChange}
@@ -143,11 +202,14 @@ const PasswordDialog: React.FC = () => {
                 ))}
               </SelectContent>
             </Select>
+            {errors.category && (
+              <p className="text-sm text-red-500">{errors.category}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <label htmlFor="websiteName" className="text-sm font-medium">
-              Website Name
+              Website Name<span className="text-red-500">*</span>
             </label>
             <Input
               id="websiteName"
@@ -155,8 +217,11 @@ const PasswordDialog: React.FC = () => {
               placeholder="Enter website name"
               value={formData.websiteName}
               onChange={handleInputChange}
-              required
+              className={errors.websiteName ? "border-red-500" : ""}
             />
+            {errors.websiteName && (
+              <p className="text-sm text-red-500">{errors.websiteName}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -170,7 +235,11 @@ const PasswordDialog: React.FC = () => {
               placeholder="Enter email address"
               value={formData.email}
               onChange={handleInputChange}
+              className={errors.email ? "border-red-500" : ""}
             />
+            {errors.email && (
+              <p className="text-sm text-red-500">{errors.email}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -188,7 +257,7 @@ const PasswordDialog: React.FC = () => {
 
           <div className="space-y-2">
             <label htmlFor="password" className="text-sm font-medium">
-              Password
+              Password<span className="text-red-500">*</span>
             </label>
             <div className="flex items-center space-x-3">
               <Input
@@ -198,7 +267,7 @@ const PasswordDialog: React.FC = () => {
                 placeholder="Enter password"
                 value={formData.password}
                 onChange={handleInputChange}
-                required
+                className={errors.password ? "border-red-500" : ""}
               />
               <Button
                 type="button"
@@ -214,6 +283,9 @@ const PasswordDialog: React.FC = () => {
                 )}
               </Button>
             </div>
+            {errors.password && (
+              <p className="text-sm text-red-500">{errors.password}</p>
+            )}
             <p className="text-sm text-zinc-500">
               Enter the password for the website or service.
             </p>
@@ -230,7 +302,9 @@ const PasswordDialog: React.FC = () => {
               placeholder="Enter website URL"
               value={formData.url}
               onChange={handleInputChange}
+              className={errors.url ? "border-red-500" : ""}
             />
+            {errors.url && <p className="text-sm text-red-500">{errors.url}</p>}
           </div>
 
           <Button type="submit" className="w-full">

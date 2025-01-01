@@ -15,15 +15,15 @@ import { useUser } from "@clerk/clerk-react";
 export function NavUser() {
   const { user } = useUser();
   const { organization } = useOrganization();
-  console.log("organization", organization);
-  console.log("user", user);
+//   console.log("organization", organization);
+//   console.log("user", user);
 
   const { isLoaded, setActive, userMemberships } = useOrganizationList({
     userMemberships: {
       infinite: true,
     },
   })
-  console.log("userMemberships", userMemberships);
+//   console.log("userMemberships", userMemberships);
   if (!user) return null;
 
   return (

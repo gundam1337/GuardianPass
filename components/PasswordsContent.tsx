@@ -129,14 +129,14 @@ const passwordColumns: ColumnDef<PasswordEntry>[] = [
 
 //example of fake data
 const passwordData: PasswordEntry[] = [
-  {
-    id: "m5gr84i9",
-    website: "netflix.com",
-    username: "ken99@yahoo.com",
-    lastUpdated: "2024-03-15",
-    password: "password123",
-    owner: "Omar",
-  },
+//   {
+//     id: "m5gr84i9",
+//     website: "netflix.com",
+//     username: "ken99@yahoo.com",
+//     lastUpdated: "2024-03-15",
+//     password: "password123",
+//     owner: "Omar",
+//   },
   // ... other entries
 ];
 

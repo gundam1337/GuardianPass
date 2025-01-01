@@ -83,7 +83,7 @@ export function EditEntryModal({ open, onOpenChange }: EditEntryModalProps) {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    console.log(formData);
+    // console.log(formData);
     setFormData(INITIAL_FORM_DATA);
     toggleIsOpen();
   };
