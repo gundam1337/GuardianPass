@@ -1,3 +1,7 @@
+"use client";
+
+import React, { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import SearchPassword from "@/components/search-password";
 import PasswordDialog from "@/components/PasswordDialog";
 import { DataTable } from "@/components/PassDataTable";
@@ -20,6 +24,8 @@ type PasswordEntry = {
   website: string;
   username: string;
   lastUpdated: string;
+  owner: string;
+  password: string;
 };
 
 const passwordColumns: ColumnDef<PasswordEntry>[] = [
@@ -31,9 +37,41 @@ const passwordColumns: ColumnDef<PasswordEntry>[] = [
     ),
   },
   {
+    accessorKey: "owner",
+    header: "Owner",
+    cell: ({ row }) => <div>{row.getValue("owner")}</div>,
+  },
+  {
     accessorKey: "username",
     header: "Username/Email",
     cell: ({ row }) => <div>{row.getValue("username")}</div>,
+  },
+  {
+    accessorKey: "password",
+    header: "Password",
+    cell: ({ row }) => {
+      const [showPassword, setShowPassword] = useState(false);
+
+      return (
+        <div className="flex items-center gap-2">
+          <div className="font-mono">
+            {showPassword ? row.getValue("password") : "•".repeat(8)}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowPassword(!showPassword)}
+            className="h-8 w-8 p-0"
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "lastUpdated",
@@ -54,6 +92,8 @@ const passwordColumns: ColumnDef<PasswordEntry>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const entry = row.original;
+      const [showPassword, setShowPassword] = useState(false);
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -68,6 +108,14 @@ const passwordColumns: ColumnDef<PasswordEntry>[] = [
               onClick={() => navigator.clipboard.writeText(entry.username)}
             >
               Copy username
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(entry.password)}
+            >
+              Copy password
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? "Hide" : "Show"} password
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <EditEntryAction />
@@ -86,6 +134,8 @@ const passwordData: PasswordEntry[] = [
     website: "netflix.com",
     username: "ken99@yahoo.com",
     lastUpdated: "2024-03-15",
+    password: "password123",
+    owner: "Omar",
   },
   // ... other entries
 ];

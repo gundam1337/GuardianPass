@@ -3,7 +3,7 @@ import { PasswordsContent } from "@/components/PasswordsContent";
 import { useDashboard } from "@/contexts/DashboardContext";
 import PasswordGenerator from "@/components/PasswordGenerator";
 import PasswordAnalyzer from "@/components/PasswordAnalyzer";
-
+import AdminConsole from "@/components/AdminConsole";
 
 const CategoryContent = ({ category }: { category: string }) => (
   <div className="p-4">
@@ -20,9 +20,12 @@ const Trash = () => (
 
 export function DashboardContent() {
   const { activeContent } = useDashboard();
+  console.log("DashboardContent - activeContent:", activeContent);
 
   const renderContent = () => {
     switch (activeContent) {
+      case "adminConsole":
+        return <AdminConsole />;
       case "passwords":
         return <PasswordsContent />;
       case "passwordGenerator":

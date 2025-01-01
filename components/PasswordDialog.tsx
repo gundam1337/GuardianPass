@@ -1,5 +1,6 @@
 "use client";
-import React, { useReducer, useState, ChangeEvent, FormEvent } from "react";
+
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,9 @@ import {
   SelectValue,
 } from "@/components/molecules/shadcn/select";
 import { EyeIcon, EyeOffIcon, Plus } from "lucide-react";
+
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface Category {
   id: string;
@@ -51,8 +55,8 @@ const sampleCategories: Category[] = [
 ];
 
 const PasswordDialog: React.FC = () => {
-  const [isOpen, toggleIsOpen] = useReducer((state: boolean) => !state, false);
-  const [seePassword, toggleSeePassword] = useReducer((state: boolean) => !state, false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [seePassword, setSeePassword] = useState(false);
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -74,8 +78,31 @@ const PasswordDialog: React.FC = () => {
     e.preventDefault();
     console.log(formData);
     setFormData(INITIAL_FORM_DATA);
-    toggleIsOpen();
+    setIsOpen(false);
   };
+
+  const toggleIsOpen = () => setIsOpen((prev) => !prev);
+  const toggleSeePassword = () => setSeePassword((prev) => !prev);
+
+  //   const createPassword = useMutation(api.password.createPassword);
+  //   const data = useQuery(api.password.getPassword);
+  //   console.log("data is" ,data);
+
+  //   const handleSubmiting = async () => {
+  //     try {
+  //       if (!inputText.trim()) return;
+
+  // Call the mutation
+  //       const result = await createPassword({ text: inputText });
+
+  // Clear the input after successful mutation
+  //       setInputText("");
+
+  //       console.log("Password created:", result);
+  //     } catch (error) {
+  //       console.error("Error creating password:", error);
+  //     }
+  //   };
 
   return (
     <Dialog open={isOpen} onOpenChange={toggleIsOpen}>
@@ -94,7 +121,9 @@ const PasswordDialog: React.FC = () => {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label htmlFor="category" className="text-sm font-medium">Category</label>
+            <label htmlFor="category" className="text-sm font-medium">
+              Category
+            </label>
             <Select
               onValueChange={handleCategoryChange}
               value={formData.category}
@@ -117,7 +146,9 @@ const PasswordDialog: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="websiteName" className="text-sm font-medium">Website Name</label>
+            <label htmlFor="websiteName" className="text-sm font-medium">
+              Website Name
+            </label>
             <Input
               id="websiteName"
               name="websiteName"
@@ -156,7 +187,9 @@ const PasswordDialog: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium">Password</label>
+            <label htmlFor="password" className="text-sm font-medium">
+              Password
+            </label>
             <div className="flex items-center space-x-3">
               <Input
                 id="password"

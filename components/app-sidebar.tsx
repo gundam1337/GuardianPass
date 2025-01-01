@@ -127,8 +127,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { setActiveContent, activeContent } = useDashboard();
 
   const handleMenuClick = (id: string) => {
-    // console.log("AppSidebar - Clicked section:", id);
-    // console.log("AppSidebar - Previous activeContent:", activeContent);
+    console.log("AppSidebar - Clicked section:", id);
+    console.log("AppSidebar - Previous activeContent:", activeContent);
     setActiveContent(id);
   };
   return (
