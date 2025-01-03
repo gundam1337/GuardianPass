@@ -14,15 +14,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { EditEntryAction } from "./EditPassModal";
-import { ChevronDown, MoreHorizontal } from "lucide-react";
+import { ChevronDown} from "lucide-react";
 import { Button } from "@/components/molecules/shadcn/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+
   DropdownMenuTrigger,
 } from "@/components/molecules/shadcn/dropdown-menu";
 import {
@@ -34,7 +32,6 @@ import {
   TableRow,
 } from "@/components/molecules/shadcn/table";
 
-import type { Table as TableType } from "@tanstack/react-table";
 
 interface DateFilterProps<TData> {
   table: any;

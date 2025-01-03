@@ -3,6 +3,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { AppHeader } from "@/components/app-header";
 import { Toaster } from "@/components/molecules/shadcn/toaster";
+import { Authenticated } from "convex/react";
 
 import {
   SidebarInset,
@@ -18,7 +19,9 @@ export default function Page() {
         <AppSidebar />
         <SidebarInset>
           <AppHeader />
-          <DashboardContent />
+          <Authenticated>
+            <DashboardContent />
+          </Authenticated>
           <Toaster />
         </SidebarInset>
       </SidebarProvider>

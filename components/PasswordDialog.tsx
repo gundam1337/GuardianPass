@@ -1,6 +1,11 @@
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
+
+import { useUser } from "@clerk/clerk-react";
+import { api } from "../convex/_generated/api";
+import { useMutation } from "convex/react";
+
 import {
   Dialog,
   DialogContent,
@@ -67,6 +72,10 @@ const PasswordDialog: React.FC = () => {
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
   const [errors, setErrors] = useState<FormErrors>({});
 
+  const addPassword = useMutation(
+    api.password.createPasswordVaultEntryPersonal
+  );
+
   const { toast } = useToast();
 
   const validateForm = (): boolean => {
@@ -126,6 +135,7 @@ const PasswordDialog: React.FC = () => {
     }
   };
 
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
@@ -139,9 +149,14 @@ const PasswordDialog: React.FC = () => {
     }
 
     try {
-      // Simulate API call
-      //to add our api call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await addPassword({
+        websiteName: formData.websiteName,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password, // Plain password - will be encrypted server-side
+        url: formData.url,
+        category: formData.category,
+      });
 
       toast({
         title: "Success!",
@@ -157,10 +172,13 @@ const PasswordDialog: React.FC = () => {
         description: "Failed to save password. Please try again.",
       });
     }
-  };
+};
 
   const toggleIsOpen = () => setIsOpen((prev) => !prev);
   const toggleSeePassword = () => setSeePassword((prev) => !prev);
+
+  const { user } = useUser();
+  console.log("user", user?.id);
 
   return (
     <Dialog open={isOpen} onOpenChange={toggleIsOpen}>

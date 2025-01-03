@@ -5,7 +5,8 @@ import { Eye, EyeOff } from "lucide-react";
 import SearchPassword from "@/components/search-password";
 import PasswordDialog from "@/components/PasswordDialog";
 import { DataTable } from "@/components/PassDataTable";
-
+import { useQuery } from "convex/react";
+import { api } from "../convex/_generated/api";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/molecules/shadcn/button";
@@ -18,15 +19,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/molecules/shadcn/dropdown-menu";
 import { EditEntryAction } from "./EditPassModal";
+import { Id } from "../convex/_generated/dataModel";
 
-type PasswordEntry = {
+// UI-side type
+interface PasswordEntry {
   id: string;
   website: string;
   username: string;
   lastUpdated: string;
   owner: string;
   password: string;
-};
+}
+
+// API response type
+
+// Transform function using the correct types
 
 const passwordColumns: ColumnDef<PasswordEntry>[] = [
   {
@@ -127,20 +134,44 @@ const passwordColumns: ColumnDef<PasswordEntry>[] = [
   },
 ];
 
-//example of fake data
-const passwordData: PasswordEntry[] = [
-//   {
-//     id: "m5gr84i9",
-//     website: "netflix.com",
-//     username: "ken99@yahoo.com",
-//     lastUpdated: "2024-03-15",
-//     password: "password123",
-//     owner: "Omar",
-//   },
-  // ... other entries
-];
+// Loading skeleton component
+
+// Exact type from the API (matching the hover type)
+interface PasswordVaultPersonal {
+  password: string;
+  _id: Id<"passwordVaultPersonal">;
+  _creationTime: number;
+  url?: string;
+  email?: string;
+  category?: string;
+  username?: string;
+  websiteName: string;
+  userId: string;
+  createdAt: number;
+}
+
+function transformPasswordData(
+  rawData: PasswordVaultPersonal[]
+): PasswordEntry[] {
+  return rawData.map((entry) => ({
+    id: entry._id,
+    website: entry.websiteName,
+    username: entry.username || "",
+    lastUpdated: new Date(entry._creationTime).toISOString().split("T")[0], // Using _creationTime instead of createdAt
+    password: entry.password,
+    owner: entry.email ? entry.email.split("@")[0] : entry.username || "",
+  }));
+}
 
 export function PasswordsContent() {
+  const data = useQuery(api.password.getAllPasswords);
+
+  if (data === undefined) {
+    return <div>Loading...</div>;
+  }
+
+  const passwordData = transformPasswordData(data);
+
   return (
     <>
       <div className="mt-6 mb-6 flex items-center space-x-3 px-4">
@@ -157,3 +188,22 @@ export function PasswordsContent() {
     </>
   );
 }
+
+// function PasswordsSkeleton() {
+//   return (
+//     <div className="w-full space-y-4 p-4">
+//       <div className="flex items-center space-x-3">
+//         <div className="h-10 w-64 animate-pulse rounded bg-gray-200" />
+//         <div className="h-10 w-32 animate-pulse rounded bg-gray-200" />
+//       </div>
+//       <div className="space-y-2">
+//         {Array.from({ length: 5 }).map((_, index) => (
+//           <div
+//             key={index}
+//             className="h-16 w-full animate-pulse rounded bg-gray-200"
+//           />
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
